@@ -36,6 +36,9 @@ import org.jboss.as.cli.CommandContext;
 import org.jboss.as.cli.CommandContextFactory;
 import org.jboss.as.cli.CommandLineException;
 import org.jboss.as.cli.Util;
+import org.jboss.as.cli.gui.FxApp;
+import org.jboss.as.cli.gui.FxCliGuiContext;
+import org.jboss.as.cli.gui.FxGuiMain;
 import org.jboss.as.cli.gui.GuiMain;
 import org.jboss.as.cli.handlers.FilenameTabCompleter;
 import org.jboss.as.cli.impl.aesh.HelpSupport;
@@ -56,6 +59,7 @@ public class CliLauncher {
         CommandContext cmdCtx = null;
         boolean gui = false;
         boolean help = false;
+        boolean guifx = false;
         final List<String> systemPropertyKeys = new ArrayList<>();
         try {
             String argError = null;
@@ -82,6 +86,8 @@ public class CliLauncher {
                     version = true;
                 } else if ("--gui".equals(arg)) {
                     gui = true;
+                } else if ("--guifx".equals(arg)){
+                    guifx = true;
                 } else if(arg.startsWith("--file=") || arg.startsWith("file=")) {
                     if(file != null) {
                         argError = "Duplicate argument '--file'.";
@@ -296,6 +302,12 @@ public class CliLauncher {
                 return;
             }
 
+            if (guifx){
+                cmdCtx = initCommandContext(ctxBuilder.build(), true);
+                processGuiFx(cmdCtx);
+                return;
+            }
+
             // Interactive mode
             ctxBuilder.setInitConsole(true);
             cmdCtx = initCommandContext(ctxBuilder.build(), connect);
@@ -333,6 +345,15 @@ public class CliLauncher {
     private static void processGui(final CommandContext cmdCtx) {
         try {
             GuiMain.start(cmdCtx);
+        } catch(Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    private static void processGuiFx(final CommandContext cmdCtx){
+        try {
+
+            FxApp.start(cmdCtx);
         } catch(Throwable t) {
             t.printStackTrace();
         }
