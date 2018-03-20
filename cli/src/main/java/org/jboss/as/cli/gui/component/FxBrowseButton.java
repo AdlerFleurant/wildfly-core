@@ -42,9 +42,9 @@ public class FxBrowseButton extends Button {
 
     public FxBrowseButton(final Dialog parentDialog, final TextField targetField) {
         super("Browse ...");
-        this.setOnAction(ae->{
+        this.setOnAction(ae -> {
             File chosen = fileChooser.showOpenDialog(parentDialog.getOwner());
-            if(chosen!=null){
+            if (chosen != null) {
                 try {
                     targetField.setText(chosen.getCanonicalPath());
                 } catch (IOException e) {
